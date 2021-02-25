@@ -114,4 +114,9 @@ public class AIMinimax implements Player
             return successorList;
     }
     
+    
+    public String getPlayName()
+    {
+        return "Minimax AI";
+    }
 }
