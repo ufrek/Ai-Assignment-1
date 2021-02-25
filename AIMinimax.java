@@ -88,13 +88,32 @@ public class AIMinimax implements Player
     //just change the method called to change the evalFunction
     int evalFunc(GameState gs)
     {
-        return stoneEvalFunc(gs, PlayerID.TOP);                         //assuming the top player is the minmax player
+        return howManyFarEvalFunc(gs, PlayerID.TOP);
+        //return howManyNearEvalFunc(gs, PlayerID.TOP);
+        //return howFarAheadEvalFunc(gs, PlayerID.TOP);
+        //return stoneEvalFunc(gs, PlayerID.TOP);                         //assuming the top player is the minmax player
     }
 
     int stoneEvalFunc(GameState gs, PlayerID curPlayer)
     {
         return gs.getHome(curPlayer);
     }
+    
+    int howFarAheadEvalFunc(GameState gs, PlayerID curPlayer)
+    {
+        int difference =  gs.getHome(curPlayer) - gs.getHome(GameRules.otherPlayer(curPlayer));
+        return difference;
+    }
+
+    int howManyNearEvalFunc(GameState gs, PlayerID curPlayer)
+    {
+        return gs.getStones(curPlayer, 0);
+    }
+    int howManyFarEvalFunc(GameState gs, PlayerID curPlayer)
+    {
+        return gs.getStones(curPlayer, 5);
+    }
+    
 
     List<GameState> getSuccessors(GameState state, PlayerID curPlayer)
     {
