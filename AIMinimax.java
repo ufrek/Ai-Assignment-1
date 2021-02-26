@@ -22,7 +22,7 @@ public class AIMinimax implements Player
             if(gameState == null)
                 continue;
 
-           tempEval = Minimax(gameState, depth, GameRules.otherPlayer(curPlayer));
+           tempEval = Minimax(gameState, depth, -99999999, 99999999, GameRules.otherPlayer(curPlayer));
            //System.out.println("tempEval = " + tempEval);                  //check MinMax return value
            if(tempEval > maxEval)
            {
@@ -45,7 +45,7 @@ public class AIMinimax implements Player
     }
 
     //TODO: Fix something with null gamestate so we don't return illegal moves
-    int Minimax(GameState gs, int depth, PlayerID curPlayer)
+    int Minimax(GameState gs, int depth, int alpha, int beta, PlayerID curPlayer)
     {
         if(depth == 0 || gs.isGameOver() )
         {
@@ -63,9 +63,12 @@ public class AIMinimax implements Player
                 if(gameState == null)                           //null == illegal move,figure out how to fix this
                     continue;
                 
-                eval = Minimax(gameState, depth-1, GameRules.otherPlayer(curPlayer));
+                eval = Minimax(gameState, depth-1, alpha, beta, GameRules.otherPlayer(curPlayer));
                 System.out.println("Eval, Depth " + eval + ", " + depth);
                 maxEval = Integer.max(maxEval, eval); 
+                alpha = Math.max(alpha, eval);
+                if(beta <= alpha)
+                    break;
              }
              return maxEval;
         }
@@ -77,9 +80,12 @@ public class AIMinimax implements Player
             {
                 if(gameState == null)
                     continue;
-                eval = Minimax(gameState, depth-1, GameRules.otherPlayer(curPlayer));
+                eval = Minimax(gameState, depth-1, alpha, beta, GameRules.otherPlayer(curPlayer));
                 System.out.println("Eval, Depth " + eval + ", " + depth);
                 minEval = Integer.min(minEval, eval); 
+                beta = Math.min(beta, eval);
+                if(beta <= alpha)
+                    break;
             }
             return minEval;
         }    
@@ -133,9 +139,4 @@ public class AIMinimax implements Player
             return successorList;
     }
     
-    
-    public String getPlayName()
-    {
-        return "Minimax AI";
-    }
 }
