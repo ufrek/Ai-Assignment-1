@@ -9,10 +9,17 @@ import ProjectOneEngine.*;
 
 public class AIMinimax implements Player
 {
+    int heuristic;
+
+    public AIMinimax(int heuristic)
+    {
+        this.heuristic = heuristic;
+    }
+    
     public Move getMove(GameState state)
     {
-        int depth = 4;          //change this value to try out performance
-        int maxEval = -1;
+        int depth = 11;          //change this value to try out performance
+        int maxEval = -999999999;
         int finalbin = -1;
         PlayerID curPlayer = state.getCurPlayer();
         int tempEval;
@@ -30,6 +37,11 @@ public class AIMinimax implements Player
                maxEval = tempEval;
            }     
         }
+        if(heuristic == 3 && maxEval == 0)
+        {
+            Random rand = new Random();
+            finalbin = rand.nextInt(6);
+        }
         System.out.println("maxEval" + maxEval);
         if(finalbin == -1)
         {
@@ -44,7 +56,7 @@ public class AIMinimax implements Player
 
     }
 
-    //TODO: Fix something with null gamestate so we don't return illegal moves
+    
     int Minimax(GameState gs, int depth, int alpha, int beta, PlayerID curPlayer)
     {
         if(depth == 0 || gs.isGameOver() )
@@ -56,7 +68,7 @@ public class AIMinimax implements Player
        int eval;
         if(curPlayer == PlayerID.TOP)       //the AI we want to test and maximize
         {
-            System.out.println("Top" + depth);
+            //System.out.println("Top" + depth);
             int maxEval = -99999999;
             for (GameState gameState : successors)
             {
@@ -64,7 +76,7 @@ public class AIMinimax implements Player
                     continue;
                 
                 eval = Minimax(gameState, depth-1, alpha, beta, GameRules.otherPlayer(curPlayer));
-                System.out.println("Eval, Depth " + eval + ", " + depth);
+                //System.out.println("Eval, Depth " + eval + ", " + depth);
                 maxEval = Integer.max(maxEval, eval); 
                 alpha = Math.max(alpha, eval);
                 if(beta <= alpha)
@@ -74,14 +86,14 @@ public class AIMinimax implements Player
         }
         else    //opponent is bottom minimize
         {
-            System.out.println("Bot");
+            //System.out.println("Bot");
             int minEval = 99999999;
             for (GameState gameState : successors) 
             {
                 if(gameState == null)
                     continue;
                 eval = Minimax(gameState, depth-1, alpha, beta, GameRules.otherPlayer(curPlayer));
-                System.out.println("Eval, Depth " + eval + ", " + depth);
+                //System.out.println("Eval, Depth " + eval + ", " + depth);
                 minEval = Integer.min(minEval, eval); 
                 beta = Math.min(beta, eval);
                 if(beta <= alpha)
@@ -92,12 +104,27 @@ public class AIMinimax implements Player
     }
 
     //just change the method called to change the evalFunction
-    int evalFunc(GameState gs)
+    int evalFunc(GameState gs)                  
     {
-        return howManyFarEvalFunc(gs, PlayerID.TOP);
-        //return howManyNearEvalFunc(gs, PlayerID.TOP);
-        //return howFarAheadEvalFunc(gs, PlayerID.TOP);
-        //return stoneEvalFunc(gs, PlayerID.TOP);                         //assuming the top player is the minmax player
+        switch (heuristic)
+         {
+            case 0:
+                return stoneEvalFunc(gs, PlayerID.TOP);
+            case 1:
+                return howManyFarEvalFunc(gs, PlayerID.TOP);
+            case 2:
+                return howManyNearEvalFunc(gs, PlayerID.TOP);
+            case 3:
+                return howFarAheadEvalFunc(gs, PlayerID.TOP);
+
+            default:
+                System.out.println("Invalid Heuristic");
+                return -99999999;
+                
+        }
+        
+      
+    
     }
 
     int stoneEvalFunc(GameState gs, PlayerID curPlayer)
@@ -113,11 +140,11 @@ public class AIMinimax implements Player
 
     int howManyNearEvalFunc(GameState gs, PlayerID curPlayer)
     {
-        return gs.getStones(curPlayer, 0);
+        return gs.getStones(curPlayer, 0) + stoneEvalFunc(gs, curPlayer);
     }
     int howManyFarEvalFunc(GameState gs, PlayerID curPlayer)
     {
-        return gs.getStones(curPlayer, 5);
+        return gs.getStones(curPlayer, 5) + stoneEvalFunc(gs, curPlayer);
     }
     
 
@@ -137,6 +164,33 @@ public class AIMinimax implements Player
             return null;
         else
             return successorList;
+    }
+
+    @Override
+    public String getPlayName() 
+    {
+        String h;
+        switch (heuristic)
+         {
+            case 0:
+               h = "Home Stones Eval";
+               break;
+            case 1:
+                h = "Far Bin Eval";
+                break;
+            case 2:
+                h ="Near Bin Eval";
+                break;
+            case 3:
+                h = "Far Ahread Eval";
+
+            default:
+                h = "Invalid Eval";
+                break;
+         }
+
+         return "Minimax: " + h;
+
     }
     
 }
