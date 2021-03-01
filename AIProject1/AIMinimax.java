@@ -10,15 +10,17 @@ import ProjectOneEngine.*;
 public class AIMinimax implements Player
 {
     int heuristic;
+    int depth = 13; //change this value to try out performance
 
-    public AIMinimax(int heuristic)
+    public AIMinimax(int heuristic, int depth)
     {
         this.heuristic = heuristic;
+        this.depth = depth;
     }
     
     public Move getMove(GameState state)
     {
-        int depth = 11;          //change this value to try out performance
+                 
         int maxEval = -999999999;
         int finalbin = -1;
         PlayerID curPlayer = state.getCurPlayer();
@@ -140,7 +142,7 @@ public class AIMinimax implements Player
 
     int howManyNearEvalFunc(GameState gs, PlayerID curPlayer)
     {
-        return gs.getStones(curPlayer, 0) + stoneEvalFunc(gs, curPlayer);
+        return   gs.getStones(curPlayer, 0) +  2 * stoneEvalFunc(gs, curPlayer);
     }
     int howManyFarEvalFunc(GameState gs, PlayerID curPlayer)
     {
@@ -173,16 +175,16 @@ public class AIMinimax implements Player
         switch (heuristic)
          {
             case 0:
-               h = "Home Stones Eval";
+               h = "Bean Counter";
                break;
             case 1:
-                h = "Far Bin Eval";
+                h = "Near Sided";
                 break;
             case 2:
-                h ="Near Bin Eval";
+                h ="Far Sided";
                 break;
             case 3:
-                h = "Far Ahread Eval";
+                h = "Conqueror of Baab";
 
             default:
                 h = "Invalid Eval";

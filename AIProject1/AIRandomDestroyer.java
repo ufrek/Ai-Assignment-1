@@ -72,7 +72,7 @@ public class AIRandomDestroyer implements Player
     
     }
 
-    List<GameState> getSuccessors(GameState state, PlayerID curPlayer)
+   List<GameState> getSuccessors(GameState state, PlayerID curPlayer)
     {
         List<GameState> successorList = new ArrayList<GameState>();
         Move tempMove;
@@ -85,9 +85,15 @@ public class AIRandomDestroyer implements Player
             
         }
         if(successorList.isEmpty())
-            return null;
+            return  null;
         else
             return successorList;
+    }
+
+    @Override
+    public String getPlayName() {
+        // TODO Auto-generated method stub
+        return "Random Destoryer";
     }
 }
 
