@@ -11,6 +11,7 @@ public class AIMinimax implements Player
 {
     int heuristic;
     int depth = 13; //change this value to try out performance
+    PlayerID player;
 
     public AIMinimax(int heuristic, int depth)
     {
@@ -24,6 +25,7 @@ public class AIMinimax implements Player
         int maxEval = -999999999;
         int finalbin = -1;
         PlayerID curPlayer = state.getCurPlayer();
+        player = curPlayer;
         int tempEval;
         List<GameState> successors = getSuccessors(state, curPlayer);
         for (GameState gameState : successors) 
@@ -68,7 +70,7 @@ public class AIMinimax implements Player
 
         List<GameState> successors = getSuccessors(gs, curPlayer);
        int eval;
-        if(curPlayer == PlayerID.TOP)       //the AI we want to test and maximize
+        if(curPlayer == player)       //the AI we want to test and maximize
         {
             //System.out.println("Top" + depth);
             int maxEval = -99999999;
@@ -111,13 +113,13 @@ public class AIMinimax implements Player
         switch (heuristic)
          {
             case 0:
-                return stoneEvalFunc(gs, PlayerID.TOP);
+                return stoneEvalFunc(gs, player);
             case 1:
-                return howManyFarEvalFunc(gs, PlayerID.TOP);
+                return howManyFarEvalFunc(gs, player);
             case 2:
-                return howManyNearEvalFunc(gs, PlayerID.TOP);
+                return howManyNearEvalFunc(gs, player);
             case 3:
-                return howFarAheadEvalFunc(gs, PlayerID.TOP);
+                return howFarAheadEvalFunc(gs, player);
 
             default:
                 System.out.println("Invalid Heuristic");
